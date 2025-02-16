@@ -21,8 +21,12 @@
 #pragma once
 
 #include <adwaita.h>
+#include <stdbool.h>
 
 G_BEGIN_DECLS
+
+extern bool SaveNeeded;
+extern bool IsInitialized;
 
 #define KANBAN_TYPE_APPLICATION (kanban_application_get_type())
 

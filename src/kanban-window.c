@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "kanban-window.h"
+#include "kanban-application.h"
 #include "kanban-column.h"
 #include "json-glib/json-glib.h"
 
@@ -91,6 +92,7 @@ save_cards(gpointer user_data)
   adw_toast_overlay_add_toast (wnd->toast_overlay, adw_toast_new ("Saved"));
 
   gtk_widget_set_sensitive (GTK_WIDGET (wnd->save), false);
+  SaveNeeded = false;
   g_free(file_path);
   g_free (data);
 
@@ -108,7 +110,10 @@ response (AdwMessageDialog* self, gchar* response, gpointer user_data)
     return;
 
   if (strstr (response, "save"))
+  {
     save_cards (user_data);
+    SaveNeeded = false;
+  }
 
   GApplication* app = G_APPLICATION (gtk_window_get_application (GTK_WINDOW (user_data)));
   g_application_quit (app);
@@ -310,6 +315,7 @@ load_ui(KanbanWindow* self)
 
   g_free(file_path);
 
+  IsInitialized = true;
   return FALSE;
 }
 
@@ -323,7 +329,7 @@ kanban_window_init (KanbanWindow *self)
 
   g_signal_connect(self, "close-request", G_CALLBACK(save_before_quit), NULL);
 
-  GSettings *settings = g_settings_new ("io.github.zhrexl.thisweekinmylife");
+  /* GSettings *settings = g_settings_new ("io.github.zhrexl.thisweekinmylife");
 
   g_settings_bind (settings, "width",
                    self, "default-width",
@@ -336,6 +342,6 @@ kanban_window_init (KanbanWindow *self)
                    G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (settings, "is-fullscreen",
                    self, "fullscreened",
-                   G_SETTINGS_BIND_DEFAULT);
+                   G_SETTINGS_BIND_DEFAULT); */
 
 }
